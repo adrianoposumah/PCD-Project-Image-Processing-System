@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moai Image Processing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script src="https://kit.fontawesome.com/bfff52efaa.js" crossorigin="anonymous"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css" />
+  </head>
+  <body>
+    <header class="border">
+      <div class="logo"></div>
+      <div class="title"><h1>Moai Image Processing</h1></div>
+    </header>
+    <div class="container">
+      <div class="canvas-area border">
+        <canvas id="canvas"></canvas>
+      </div>
+      <div class="toolbar-area border">
+        <div class="upload-image">
+          <input type="file" id="uploadBtn" />
+          <label for="uploadBtn"><i class="fa-solid fa-upload"></i>Upload File</label>
+        </div>
+        <div class="tools">
+          <div class="active-pencil" onclick="toggleActivePencil()">
+            <i class="fa-solid fa-pencil"></i>
+          </div>
+          <button onclick="undo_last()" class="button">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+          <button onclick="clear_canvas()" class="button">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+          <div onclick="change_color(this)" class="color-field eraser" style="background-color: white">
+            <i class="fa-solid fa-eraser"></i>
+          </div>
+          <input id="color-picker" value="#276cb8" class="color-picker" />
+          <input type="range" min="1" max="100" class="pen-range" oninput="setDrawWidth(this.value)" />
+        </div>
+        <div class="process-image">
+          <button>Process Image</button>
+        </div>
+        <div class="functions-button">
+          <!-- Crop, Brightness, Contras, Rotate (left, right, 90deg, 180deg), translate, scaling, mirror -->
+          <div class="cropFunc">
+            <div class="crop-image functionsBtn">
+              <button>Crop Image</button>
+            </div>
+          </div>
+          <div class="brightnessFunc">
+            <label for="brightness">Brighness: </label>
+            <input type="range" min="-100" max="100" />
+          </div>
+          <div class="contrastFunc">
+            <label for="contrast">Contrast: </label>
+            <input type="range" min="10" max="10" />
+          </div>
+          <div class="rotateFunc">
+            <label for="rotate">Rotate: </label>
+            <button class="left"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+            <button class="right"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+            <button class="90">90°</button>
+            <button class="180">180°</button>
+          </div>
+          <div class="translateFunc">
+            <label for="translate">Translate: </label>
+            <input type="text" placeholder="x" />
+            <input type="text" placeholder="y" />
+          </div>
+          <div class="scalingFunc">
+            <label for="scaling">Scaling: </label>
+            <input type="text" />
+          </div>
+          <div class="mirrorFunc">
+            <div class="crop-image functionsBtn">
+              <button>MIRROR</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="toolbar-area2 border">
+        <div class="div-entahlah"></div>
+        <div class="save-image">
+          <button><i class="fa-solid fa-save"></i>Save Image</button>
+        </div>
+      </div>
+      <div class="result-area border">result</div>
+    </div>
+    <script src="{{ url_for('static', filename='canvas.js') }}"></script>
+    <script type="text/javascript">
+      $(document).ready(function ($) {
+        $("#color-picker").spectrum({
+          type: "component",
+          change: function (color) {
+            setDrawColor(color.toHexString());
+          },
+        });
+      });
+
+      function toggleActivePencil() {
+        document.querySelector(".active-pencil").classList.toggle("active");
+      }
+    </script>
+  </body>
+</html>
