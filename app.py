@@ -49,6 +49,17 @@ def mirrorV(berkas):
             for c in range(channel):
                 G[y, x, c] = berkas[y2, x, c]
 
+    return 
+
+def translasi(F, gy, gx):
+    tinggi, lebar, channel = F.shape
+    G = np.zeros_like(F, dtype=np.uint8)
+
+    for y in range(tinggi):
+        for x in range(lebar):
+            if 0 <= y + gy < tinggi and 0 <= x + gx < lebar:
+                G[y + gy, x + gx] = F[y, x]
+
     return G
 
 @app.route('/', methods=['GET', 'POST'])
@@ -108,6 +119,24 @@ def home():
                     image = Image.open(filepath)
                     image_array = np.array(image)
                     processed_image_array = mirrorV(image_array)
+
+                elif action == 'translate':
+                    # Continue with translate function
+                    ty = int(request.form.get('ty', 0))  # Get translation values from form
+                    tx = int(request.form.get('tx', 0))
+
+                    # Continue with translate function using scaled image if available
+                    scaled_filepath = os.path.join('uploads', 'scaled_' + os.path.basename(filepath))
+                    if os.path.exists(scaled_filepath):
+                        filepath = scaled_filepath  # Use scaled image for translate function
+                    else:
+                        return jsonify({'error': 'Scaled image not found'}), 400
+
+                    # Continue with translate function
+                    image = Image.open(filepath)
+                    image_array = np.array(image)
+                    processed_image_array = translasi(image_array, ty, tx)
+
                 else:
                     return jsonify({'error': 'Invalid action'}), 400
 
