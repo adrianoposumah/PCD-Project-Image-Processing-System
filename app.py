@@ -197,6 +197,22 @@ def home():
                     tx = int(request.form.get('tx', 0))
                     processed_image_array = translasi(image_array, ty, tx)
 
+                elif action == 'rotate90':  # Integrate the rotate action
+                    # Continue with rotate function
+                    image = Image.open(filepath)
+                    image_array = np.array(image)
+                    processed_image_array = rotate90(image_array)
+                elif action == 'rotate180':  # Integrate the rotate action
+                    # Continue with rotate function
+                    image = Image.open(filepath)
+                    image_array = np.array(image)
+                    processed_image_array = rotate180(image_array)
+                elif action == 'rotate270':  # Integrate the rotate action
+                    # Continue with rotate function
+                    image = Image.open(filepath)
+                    image_array = np.array(image)
+                    processed_image_array = rotate270(image_array)
+
                 else:
                     return jsonify({'error': 'Invalid action'}), 400
 
