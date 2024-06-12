@@ -10,6 +10,28 @@ def ensure_uploads_dir():
     if not os.path.exists('uploads'):
         os.makedirs('uploads')
 
+def brightness_up(berkas):
+    F = berkas.astype(np.float64)
+    F += 100  # Atur nilai kecerahan sesuai kebutuhan
+    F[F > 255] = 255  # Batasi nilai kecerahan maksimum
+    G = F.astype(np.uint8)
+    return G
+
+def brightness_down(berkas):
+    F = berkas.astype(np.float64)
+    F -= 100  # Atur nilai kecerahan sesuai kebutuhan
+    F[F < 0] = 0  # Batasi nilai kecerahan minimum
+    G = F.astype(np.uint8)
+    return G
+
+def contrast(berkas,):
+    F = berkas.astype(np.float64)
+    F *= 100  # Menambahkan kontras sesuai dengan level yang diberikan
+    F[F > 255] = 255  # Batasi nilai kecerahan maksimum
+    F[F < 0] = 0  # Batasi nilai kecerahan minimum
+    G = F.astype(np.uint8)
+    return G
+
 def perbesar(berkas, sy, sx):
     tinggi, lebar, channel = berkas.shape
 
@@ -119,24 +141,13 @@ def home():
                     image = Image.open(filepath)
                     image_array = np.array(image)
                     processed_image_array = mirrorV(image_array)
-
-                elif action == 'translate':
-                    # Continue with translate function
-                    ty = int(request.form.get('ty', 0))  # Get translation values from form
-                    tx = int(request.form.get('tx', 0))
-
-                    # Continue with translate function using scaled image if available
-                    scaled_filepath = os.path.join('uploads', 'scaled_' + os.path.basename(filepath))
-                    if os.path.exists(scaled_filepath):
-                        filepath = scaled_filepath  # Use scaled image for translate function
-                    else:
-                        return jsonify({'error': 'Scaled image not found'}), 400
-
-                    # Continue with translate function
-                    image = Image.open(filepath)
-                    image_array = np.array(image)
-                    processed_image_array = translasi(image_array, ty, tx)
-
+                elif action == 'brightnessup':
+                    processed_image_array = brightness_up(image_array)
+                elif action == 'brightnessdown':
+                    processed_image_array = brightness_down(image_array)
+                elif action == 'contrast':
+                    contrast_level = float(request.form.get('contrast_level', 1.0))  # Ambil level kontras dari form
+                    processed_image_array = contrast(image_array, contrast_level)
                 else:
                     return jsonify({'error': 'Invalid action'}), 400
 
@@ -150,6 +161,7 @@ def home():
                 return jsonify({'error': str(e)}), 500
     else:
         return render_template("index.html")
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):

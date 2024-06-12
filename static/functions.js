@@ -7,17 +7,12 @@ function processImage(action) {
   formData.append("file", file);
   formData.append("action", action);
 
-  // Append scale, translate, or other parameters if applicable
+  // Append scale parameters if applicable
   if (action === "scale") {
     const sy = document.getElementById("sy").value;
     const sx = document.getElementById("sx").value;
     formData.append("sy", sy);
     formData.append("sx", sx);
-  } else if (action === "translate") {
-    const ty = document.getElementById("ty").value;
-    const tx = document.getElementById("tx").value;
-    formData.append("ty", ty);
-    formData.append("tx", tx);
   }
 
   fetch("/", {
@@ -29,6 +24,7 @@ function processImage(action) {
       if (data.error) {
         alert(data.error);
       } else {
+        // Simpan nama file yang dihasilkan
         currentFile = data.filepath;
         updateImagePreview(data.filepath);
       }
@@ -36,6 +32,16 @@ function processImage(action) {
     .catch((error) => {
       console.error("Error:", error);
     });
+}
+
+// Function untuk menambah kecerahan gambar
+function processBrightnessUp() {
+  processImage("brightnessup");
+}
+
+// Function untuk mengurangi kecerahan gambar
+function processBrightnessDown() {
+  processImage("brightnessdown");
 }
 
 // Fungsi untuk menjalankan fungsi mirrorh dengan menggunakan file terbaru
@@ -51,8 +57,4 @@ function processMirrorV() {
 // Fungsi untuk menjalankan fungsi scale dengan menggunakan file terbaru
 function processScale() {
   processImage("scale");
-}
-
-function processTranslate() {
-  processImage("translate");
 }
