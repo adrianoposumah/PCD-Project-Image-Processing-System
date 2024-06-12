@@ -71,7 +71,7 @@ def mirrorV(berkas):
             for c in range(channel):
                 G[y, x, c] = berkas[y2, x, c]
 
-    return 
+    return G
 
 def translasi(F, gy, gx):
     tinggi, lebar, channel = F.shape
@@ -81,6 +81,17 @@ def translasi(F, gy, gx):
         for x in range(lebar):
             if 0 <= y + gy < tinggi and 0 <= x + gx < lebar:
                 G[y + gy, x + gx] = F[y, x]
+
+    return G
+
+def crop(berkas, f1, f2):
+    tinggi, lebar = berkas.shape  # Mengambil tinggi dan lebar saja
+    G = np.zeros((tinggi, lebar), dtype=np.uint8)
+
+    for y in range(tinggi):
+        for x in range(lebar):
+            if f1 <= berkas[y, x] <= f2:  # Mengubah pengecekan kondisi
+                G[y, x] = berkas[y, x]
 
     return G
 
@@ -96,8 +107,6 @@ def home():
         if file:
             try:
                 action = request.form.get('action')
-                sy = float(request.form.get('sy', 1))
-                sx = float(request.form.get('sx', 1))
 
                 # Use currentFile if available
                 filepath = file.filename
@@ -112,35 +121,14 @@ def home():
 
                 # Apply the appropriate function based on the selected action
                 if action == 'scale':
+                    sy = float(request.form.get('sy', 1))
+                    sx = float(request.form.get('sx', 1))
                     processed_image_array = perbesar(image_array, sy, sx)
-                    # Save the processed image with a specific filename
-                    processed_filepath = os.path.join('uploads', 'scaled_' + os.path.basename(filepath))
-                    processed_image = Image.fromarray(processed_image_array)
-                    processed_image.save(processed_filepath)
                 elif action == 'mirrorh':
-                    # Check if there's a scaled image available
-                    scaled_filepath = os.path.join('uploads', 'scaled_' + os.path.basename(filepath))
-                    if os.path.exists(scaled_filepath):
-                        filepath = scaled_filepath  # Use scaled image for mirror function
-                    else:
-                        return jsonify({'error': 'Scaled image not found'}), 400
-
-                    # Continue with mirror function
-                    image = Image.open(filepath)
-                    image_array = np.array(image)
                     processed_image_array = mirrorH(image_array)
                 elif action == 'mirrorv':
-                    # Continue with mirror function using scaled image if available
-                    scaled_filepath = os.path.join('uploads', 'scaled_' + os.path.basename(filepath))
-                    if os.path.exists(scaled_filepath):
-                        filepath = scaled_filepath  # Use scaled image for mirror function
-                    else:
-                        return jsonify({'error': 'Scaled image not found'}), 400
-
-                    # Continue with mirror function
-                    image = Image.open(filepath)
-                    image_array = np.array(image)
                     processed_image_array = mirrorV(image_array)
+
                 elif action == 'brightnessup':
                     processed_image_array = brightness_up(image_array)
                 elif action == 'brightnessdown':
@@ -148,6 +136,16 @@ def home():
                 elif action == 'contrast':
                     contrast_level = float(request.form.get('contrast_level', 1.0))  # Ambil level kontras dari form
                     processed_image_array = contrast(image_array, contrast_level)
+
+                elif action == 'translate':
+                    ty = int(request.form.get('ty', 0))  # Get translation values from form
+                    tx = int(request.form.get('tx', 0))
+                    processed_image_array = translasi(image_array, ty, tx)
+                elif action == 'crop':
+                    f1 = int(request.form.get('f1', 0))  # Get crop values from form
+                    f2 = int(request.form.get('f2', 255))
+                    processed_image_array = crop(image_array, f1, f2)
+
                 else:
                     return jsonify({'error': 'Invalid action'}), 400
 

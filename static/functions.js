@@ -7,12 +7,21 @@ function processImage(action) {
   formData.append("file", file);
   formData.append("action", action);
 
-  // Append scale parameters if applicable
   if (action === "scale") {
     const sy = document.getElementById("sy").value;
     const sx = document.getElementById("sx").value;
     formData.append("sy", sy);
     formData.append("sx", sx);
+  } else if (action === "translate") {
+    const ty = document.getElementById("ty").value;
+    const tx = document.getElementById("tx").value;
+    formData.append("ty", ty);
+    formData.append("tx", tx);
+  } else if (action === "crop") {
+    const f1 = document.getElementById("f1").value;
+    const f2 = document.getElementById("f2").value;
+    formData.append("f1", f1);
+    formData.append("f2", f2);
   }
 
   fetch("/", {
@@ -57,4 +66,12 @@ function processMirrorV() {
 // Fungsi untuk menjalankan fungsi scale dengan menggunakan file terbaru
 function processScale() {
   processImage("scale");
+}
+
+function processTranslate() {
+  processImage("translate");
+}
+
+function processCrop() {
+  processImage("crop");
 }
