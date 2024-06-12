@@ -118,3 +118,13 @@ document.addEventListener("DOMContentLoaded", () => {
   window.setDrawColor = setDrawColor;
   window.setDrawWidth = setDrawWidth;
 });
+
+function saveCanvasImage() {
+  const canvas = document.getElementById("canvas");
+  const link = document.createElement("a");
+  link.href = canvas.toDataURL("image/png");
+  link.download = "canvas_image.png";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}

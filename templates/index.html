@@ -20,11 +20,13 @@
   <body>
     <header class="border">
       <div class="logo"></div>
-      <div class="title"><h1>Moai Image Processing</h1></div>
+      <div class="title"><h1>Image Processing</h1></div>
     </header>
     <div class="container">
       <div class="canvas-area border">
-        <canvas id="canvas"></canvas>
+        <div class="canvas-paper">
+          <canvas id="canvas"></canvas>
+        </div>
       </div>
       <div class="toolbar-area">
         <div class="canvas-tools">
@@ -45,7 +47,7 @@
             <input type="range" min="1" max="100" class="pen-range" oninput="setDrawWidth(this.value)" />
           </div>
           <div class="process-image">
-            <button>Process Image</button>
+            <button onclick="saveCanvasImage()">Save Canvas Image</button>
           </div>
         </div>
       </div>
