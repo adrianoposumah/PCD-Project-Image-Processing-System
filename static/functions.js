@@ -1,41 +1,19 @@
-function scaleImage() {
+function processImage(action) {
   const fileInput = document.getElementById("uploadBtn");
   const file = fileInput.files[0];
-  const sy = document.getElementById("sy").value;
-  const sx = document.getElementById("sx").value;
-
-  const formData = new FormData();
+  let formData = new FormData();
   formData.append("file", file);
-  formData.append("sy", sy);
-  formData.append("sx", sx);
+  formData.append("action", action);
 
-  fetch("/upload", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.error) {
-        alert(data.error);
-      } else {
-        // Update the preview with the processed image
-        updateImagePreview(data.filepath);
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-}
+  // Append scale parameters if applicable
+  if (action === "scale") {
+    const sy = document.getElementById("sy").value;
+    const sx = document.getElementById("sx").value;
+    formData.append("sy", sy);
+    formData.append("sx", sx);
+  }
 
-function mirrorHImage() {
-  const fileInput = document.getElementById("uploadBtn");
-  const file = fileInput.files[0];
-
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("action", "mirrorh");
-
-  fetch("/process_image", {
+  fetch("/", {
     method: "POST",
     body: formData,
   })
@@ -52,27 +30,8 @@ function mirrorHImage() {
     });
 }
 
-function mirrorVImage() {
-  const fileInput = document.getElementById("uploadBtn");
-  const file = fileInput.files[0];
-
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("action", "mirrorv");
-
-  fetch("/process_image", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.error) {
-        alert(data.error);
-      } else {
-        updateImagePreview(data.filepath);
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+// Function to update the image preview
+function updateImagePreview(imagePath) {
+  const imagePreview = document.getElementById("imagePreview");
+  imagePreview.src = imagePath;
 }

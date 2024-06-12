@@ -139,20 +139,20 @@
             <div class="scalingEditor editor-area">
               <div class="area-input-1">
                 <label for="sy">Scaling Y: </label>
-                <input type="number" id="sy" name="sy" step="0.1" value="2.0" />
+                <input type="number" id="sy" name="sy" step="0.1" value="4.0" />
               </div>
               <div class="area-input-2">
                 <label for="sx">Scaling X: </label>
-                <input type="number" id="sx" name="sx" step="0.1" value="2.0" />
+                <input type="number" id="sx" name="sx" step="0.1" value="4.0" />
               </div>
               <div class="area-button">
-                <button onclick="scaleImage()">Process Image</button>
+                <button onclick="processImage('scale')">Process Image</button>
               </div>
             </div>
             <div class="mirrorEditor editor-area">
               <div class="area-button">
-                <button onclick="mirrorHImage()">MIRROR H<i class="uil uil-flip-v-alt"></i></button>
-                <button onclick="mirrorVImage()">MIRROR V<i class="uil uil-flip-v-alt"></i></button>
+                <button onclick="processImage('mirrorh')">MIRROR H<i class="uil uil-flip-v-alt"></i></button>
+                <button onclick="processImage('mirrorv')">MIRROR V<i class="uil uil-flip-v-alt"></i></button>
               </div>
             </div>
           </div>
@@ -216,6 +216,18 @@
           var index = $(this).index();
           $(".editor-area").eq(index).addClass("active");
         });
+      });
+
+      document.getElementById("scaleBtn").addEventListener("click", function () {
+        processImage("scale");
+      });
+
+      document.getElementById("mirrorHBtn").addEventListener("click", function () {
+        processImage("mirrorh");
+      });
+
+      document.getElementById("mirrorVBtn").addEventListener("click", function () {
+        processImage("mirrorv");
       });
     </script>
   </body>

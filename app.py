@@ -51,64 +51,45 @@ def mirrorV(berkas):
 
     return G
 
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template("index.html")
+    if request.method == 'POST':
+        ensure_uploads_dir()
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file part'}), 400
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+        if file:
+            try:
+                action = request.form.get('action')
+                sy = float(request.form.get('sy', 1))
+                sx = float(request.form.get('sx', 1))
+                filepath = os.path.join('uploads', file.filename)
+                file.save(filepath)
+                image = Image.open(filepath) # Mengubah gambar menjadi grayscale untuk proses
+                image_array = np.array(image)
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    ensure_uploads_dir()
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'})
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'})
-    if file:
-        sy = float(request.form['sy'])
-        sx = float(request.form['sx'])
-        filepath = os.path.join('uploads', file.filename)
-        file.save(filepath)
-        image = Image.open(filepath) # Mengubah gambar menjadi grayscale untuk proses
-        image_array = np.array(image)
-        
-        # Terapkan fungsi perbesar
-        scaled_image_array = perbesar(image_array, sy, sx)
-        
-        # Konversi kembali ke gambar untuk ditampilkan atau disimpan
-        scaled_image = Image.fromarray(scaled_image_array)
-        processed_filepath = os.path.join('uploads', 'processed_' + file.filename)
-        scaled_image.save(processed_filepath)
-        
-        return jsonify({'message': 'Image uploaded and scaled successfully', 'filepath': processed_filepath})
+                # Terapkan fungsi yang sesuai berdasarkan aksi yang dipilih
+                if action == 'scale':
+                    processed_image_array = perbesar(image_array, sy, sx)
+                elif action == 'mirrorh':
+                    processed_image_array = mirrorH(image_array)
+                elif action == 'mirrorv':
+                    processed_image_array = mirrorV(image_array)
+                else:
+                    return jsonify({'error': 'Invalid action'}), 400
 
-@app.route('/process_image', methods=['POST'])
-def process_image():
-    ensure_uploads_dir()
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'})
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'})
-    if file:
-        action = request.form['action']
-        filepath = os.path.join('uploads', file.filename)
-        file.save(filepath)
-        image = Image.open(filepath)  # Mengubah gambar menjadi grayscale untuk proses
-        image_array = np.array(image)
-        
-        if action == 'mirrorh':
-            processed_image_array = mirrorH(image_array)  # Ubah dari mirrorh menjadi mirrorH
-        elif action == 'mirrorv':
-            processed_image_array = mirrorV(image_array)
-        else:
-            return jsonify({'error': 'Invalid action'})
-        
-        processed_image = Image.fromarray(processed_image_array)
-        processed_filepath = os.path.join('uploads', 'processed_' + file.filename)
-        processed_image.save(processed_filepath)
-        
-        return jsonify({'message': 'Image processed successfully', 'filepath': processed_filepath})
+                # Konversi kembali ke gambar untuk ditampilkan atau disimpan
+                processed_image = Image.fromarray(processed_image_array)
+                processed_filepath = os.path.join('uploads', 'processed_' + file.filename)
+                processed_image.save(processed_filepath)
+
+                return jsonify({'message': 'Image processed successfully', 'filepath': processed_filepath})
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+    else:
+        return render_template("index.html")
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
