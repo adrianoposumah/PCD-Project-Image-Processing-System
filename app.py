@@ -197,6 +197,7 @@ def home():
                     tx = int(request.form.get('tx', 0))
                     processed_image_array = translasi(image_array, ty, tx)
 
+
                 elif action == 'rotate90':  # Integrate the rotate action
                     # Continue with rotate function
                     image = Image.open(filepath)
@@ -213,6 +214,10 @@ def home():
                     image_array = np.array(image)
                     processed_image_array = rotate270(image_array)
 
+                elif action == 'crop':
+                        f1 = int(request.form.get('f1', 0))  # Get crop values from form
+                        f2 = int(request.form.get('f2', 255))
+                        processed_image_array = crop(np.array(Image.open(filepath)), f1, f2)
                 else:
                     return jsonify({'error': 'Invalid action'}), 400
 
