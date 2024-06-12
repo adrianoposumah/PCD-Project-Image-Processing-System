@@ -5,10 +5,16 @@ import os
 
 app = Flask(__name__)
 
+latest_processed_image = None
+
 # Fungsi untuk memastikan direktori uploads ada jika belum
 def ensure_uploads_dir():
     if not os.path.exists('uploads'):
         os.makedirs('uploads')
+
+def reset_saved_image():
+    latest_processed_image = None
+    return latest_processed_image
 
 def brightness_up(berkas):
     F = berkas.astype(np.float64)
@@ -154,6 +160,8 @@ def rotate270(image):
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    global latest_processed_image
+
     if request.method == 'POST':
         ensure_uploads_dir()
         if 'file' not in request.files:
@@ -164,14 +172,22 @@ def home():
         if file:
             try:
                 action = request.form.get('action')
-
-                # Use currentFile if available
-                filepath = file.filename
-                if file.filename.startswith('processed_'):
-                    filepath = os.path.join('uploads', file.filename)
-                else:
+                if latest_processed_image is None:
+                    # If no image has been processed yet, save the uploaded file as the latest processed image
                     filepath = os.path.join('uploads', 'processed_' + file.filename)
                     file.save(filepath)
+                    latest_processed_image = filepath
+                else:
+                    # Use the latest processed image as the input for the next transformation
+                    filepath = latest_processed_image
+
+                # Use currentFile if available
+                # filepath = file.filename
+                # if file.filename.startswith('processed_'):
+                #     filepath = os.path.join('uploads', file.filename)
+                # else:
+                #     filepath = os.path.join('uploads', 'processed_' + file.filename)
+                #     file.save(filepath)
 
                 image = Image.open(filepath)
                 image_array = np.array(image)
@@ -226,10 +242,13 @@ def home():
                 processed_filepath = os.path.join('uploads', 'processed_' + os.path.basename(filepath))
                 processed_image.save(processed_filepath)
 
+                latest_processed_image = processed_filepath
+
                 return jsonify({'message': 'Image processed successfully', 'filepath': processed_filepath})
             except Exception as e:
                 return jsonify({'error': str(e)}), 500
     else:
+        latest_processed_image = None
         return render_template("index.html")
 
 
