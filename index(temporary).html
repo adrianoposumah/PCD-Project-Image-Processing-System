@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moai Image Processing</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style(temporary).css" />
     <script src="https://kit.fontawesome.com/bfff52efaa.js" crossorigin="anonymous"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,77 +24,145 @@
       <div class="canvas-area border">
         <canvas id="canvas"></canvas>
       </div>
-      <div class="toolbar-area border">
-        <div class="upload-image">
-          <input type="file" id="uploadBtn" />
-          <label for="uploadBtn"><i class="fa-solid fa-upload"></i>Upload File</label>
-        </div>
-        <div class="tools">
-          <div class="active-pencil" onclick="toggleActivePencil()">
-            <i class="fa-solid fa-pencil"></i>
+      <div class="toolbar-area">
+        <div class="canvas-tools">
+          <div class="tools">
+            <div class="active-pencil" onclick="toggleActivePencil()">
+              <i class="fa-solid fa-pencil"></i>
+            </div>
+            <button onclick="undo_last()" class="button">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <button onclick="clear_canvas()" class="button">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+            <div onclick="change_color(this)" class="color-field eraser" style="background-color: white">
+              <i class="fa-solid fa-eraser"></i>
+            </div>
+            <input id="color-picker" value="#276cb8" class="color-picker" />
+            <input type="range" min="1" max="100" class="pen-range" oninput="setDrawWidth(this.value)" />
           </div>
-          <button onclick="undo_last()" class="button">
-            <i class="fa-solid fa-rotate-left"></i>
-          </button>
-          <button onclick="clear_canvas()" class="button">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-          <div onclick="change_color(this)" class="color-field eraser" style="background-color: white">
-            <i class="fa-solid fa-eraser"></i>
+          <div class="process-image">
+            <button>Process Image</button>
           </div>
-          <input id="color-picker" value="#276cb8" class="color-picker" />
-          <input type="range" min="1" max="100" class="pen-range" oninput="setDrawWidth(this.value)" />
         </div>
-        <div class="process-image">
-          <button>Process Image</button>
+      </div>
+      <div class="toolbar-area2">
+        <div class="action-btn">
+          <div class="upload-image">
+            <input type="file" id="uploadBtn" />
+            <label for="uploadBtn"><i class="fa-solid fa-upload"></i>Upload File</label>
+          </div>
+          <div class="save-image">
+            <button onclick="saveImage()"><i class="fa-solid fa-save"></i> Save Image</button>
+          </div>
         </div>
         <div class="functions-button">
           <!-- Crop, Brightness, Contras, Rotate (left, right, 90deg, 180deg), translate, scaling, mirror -->
-          <div class="cropFunc">
-            <div class="crop-image functionsBtn">
-              <button>Crop Image</button>
+          <div class="functionBtn">
+            <div class="cropFunc functionsBtn active">
+              <button>Crop</button>
+            </div>
+            <div class="brightnessFunc functionsBtn">
+              <button>Brightness</button>
+            </div>
+            <div class="contrastFunc functionsBtn">
+              <button>Contrast</button>
+            </div>
+            <div class="rotateFunc functionsBtn">
+              <button>Rotate</button>
+            </div>
+            <div class="translateFunc functionsBtn">
+              <button>Translate</button>
+            </div>
+            <div class="scalingFunc functionsBtn">
+              <button>Scaling</button>
+            </div>
+            <div class="mirrorFunc functionsBtn">
+              <button>Mirror</button>
             </div>
           </div>
-          <div class="brightnessFunc">
-            <label for="brightness">Brighness: </label>
-            <input type="range" min="-100" max="100" />
-          </div>
-          <div class="contrastFunc">
-            <label for="contrast">Contrast: </label>
-            <input type="range" min="10" max="10" />
-          </div>
-          <div class="rotateFunc">
-            <label for="rotate">Rotate: </label>
-            <button class="left"><i class="fa-solid fa-arrow-rotate-left"></i></button>
-            <button class="right"><i class="fa-solid fa-arrow-rotate-right"></i></button>
-            <button class="90">90°</button>
-            <button class="180">180°</button>
-          </div>
-          <div class="translateFunc">
-            <label for="translate">Translate: </label>
-            <input type="text" placeholder="x" />
-            <input type="text" placeholder="y" />
-          </div>
-          <div class="scalingFunc">
-            <label for="scaling">Scaling: </label>
-            <input type="text" />
-          </div>
-          <div class="mirrorFunc">
-            <div class="crop-image functionsBtn">
-              <button>MIRROR</button>
+          <div class="functionEditor">
+            <div class="cropEditor editor-area active">
+              <div class="area-input-1">
+                <label for="f1">F1:</label>
+                <input type="number" name="f1" />
+              </div>
+              <div class="area-input-2">
+                <label for="f2">F2:</label>
+                <input type="number" name="f2" />
+              </div>
+              <div class="area-button">
+                <button onclick="cropImage()">Process Image</button>
+              </div>
+            </div>
+            <div class="brightnessEditor editor-area">
+              <label for="brightness">Brightness: </label>
+              <input type="range" min="-100" max="100" />
+              <div class="area-button">
+                <button onclick="brightnessImage()">Process Image</button>
+              </div>
+            </div>
+            <div class="contrastEditor editor-area">
+              <label for="contrast">Contrast: </label>
+              <input type="range" min="10" max="10" />
+              <div class="area-button">
+                <button onclick="contrastImage()">Process Image</button>
+              </div>
+            </div>
+            <div class="rotateEditor editor-area">
+              <div class="rotateEditorarea">
+                <label for="rotate">Rotate: </label>
+                <div class="rotateBtn-area">
+                  <button class="left"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+                  <button class="right"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+                  <button class="90">90°</button>
+                  <button class="180">180°</button>
+                </div>
+              </div>
+            </div>
+            <div class="translateEditor editor-area">
+              <div class="area-input-1">
+                <label for="ty">Translate Y: </label>
+                <input type="number" id="ty" name="ty" />
+              </div>
+              <div class="area-input-2">
+                <label for="tx">Translate X: </label>
+                <input type="number" id="tx" name="tx" />
+              </div>
+              <div class="area-button">
+                <button onclick="translateImage()">Process Image</button>
+              </div>
+            </div>
+            <div class="scalingEditor editor-area">
+              <div class="area-input-1">
+                <label for="sy">Scaling Y: </label>
+                <input type="number" id="sy" name="sy" step="0.1" value="2.0" />
+              </div>
+              <div class="area-input-2">
+                <label for="sx">Scaling X: </label>
+                <input type="number" id="sx" name="sx" step="0.1" value="2.0" />
+              </div>
+              <div class="area-button">
+                <button onclick="scaleImage()">Process Image</button>
+              </div>
+            </div>
+            <div class="mirrorEditor editor-area">
+              <div class="area-button">
+                <button onclick="mirrorImage()">MIRROR</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="toolbar-area2 border">
-        <div class="div-entahlah"></div>
-        <div class="save-image">
-          <button><i class="fa-solid fa-save"></i>Save Image</button>
+      <div class="result-area border">
+        <div class="result-img-area">
+          <img id="imagePreview" src="uploads/processed_LennaGray.png" alt="Image Area Here" />
         </div>
       </div>
-      <div class="result-area border">result</div>
     </div>
-    <script src="canvas.js"></script>
+    <script src="canvas(temporary).js"></script>
+    <script src="{{ url_for('static', filename='functions.js') }}"></script>
     <script type="text/javascript">
       $(document).ready(function ($) {
         $("#color-picker").spectrum({
@@ -108,6 +176,44 @@
       function toggleActivePencil() {
         document.querySelector(".active-pencil").classList.toggle("active");
       }
+
+      document.getElementById("uploadBtn").addEventListener("change", previewImage);
+
+      function previewImage(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById("imagePreview").src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function updateImagePreview(imagePath) {
+        document.getElementById("imagePreview").src = imagePath;
+      }
+
+      function saveImage() {
+        const imagePreview = document.getElementById("imagePreview");
+        const link = document.createElement("a");
+        link.href = imagePreview.src;
+        link.download = "processed_image.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      $(document).ready(function () {
+        $(".functionsBtn").click(function () {
+          // Remove active class from all function buttons and editor areas
+          $(".functionsBtn").removeClass("active");
+          $(".editor-area").removeClass("active");
+
+          // Add active class to the clicked button and corresponding editor area
+          $(this).addClass("active");
+          var index = $(this).index();
+          $(".editor-area").eq(index).addClass("active");
+        });
+      });
     </script>
   </body>
 </html>
