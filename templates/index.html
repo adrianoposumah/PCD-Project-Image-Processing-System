@@ -99,10 +99,17 @@
               </div>
             </div>
             <div class="brightnessEditor editor-area">
-              <label for="brightness">Brightness: </label>
-              <input type="range" min="-100" max="100" />
+              <div class="area-input-1">
+                <label for="brightness">Brightness Up: </label>
+                <input type="number" />
+              </div>
+              <div class="area-input-2">
+                <label for="brightness">Brightness Down: </label>
+                <input type="number" />
+              </div>
               <div class="area-button">
-                <button onclick="brightnessImage()">Process Image</button>
+                <button onclick="processImage('brightnessup')">Process Image</button>
+                <button onclick="processImage('brightnessdown')">Process Image</button>
               </div>
             </div>
             <div class="contrastEditor editor-area">
