@@ -7,7 +7,7 @@ function processImage(action) {
   formData.append("file", file);
   formData.append("action", action);
 
-  // Append scale, translate, or other parameters if applicable
+  // Append scale, translate, crop, or other parameters if applicable
   if (action === "scale") {
     const sy = document.getElementById("sy").value;
     const sx = document.getElementById("sx").value;
@@ -18,6 +18,11 @@ function processImage(action) {
     const tx = document.getElementById("tx").value;
     formData.append("ty", ty);
     formData.append("tx", tx);
+  } else if (action === "crop") {
+    const f1 = document.getElementById("f1").value;
+    const f2 = document.getElementById("f2").value;
+    formData.append("f1", f1);
+    formData.append("f2", f2);
   }
 
   fetch("/", {
@@ -55,4 +60,8 @@ function processScale() {
 
 function processTranslate() {
   processImage("translate");
+}
+
+function processCrop() {
+  processImage("crop");
 }
