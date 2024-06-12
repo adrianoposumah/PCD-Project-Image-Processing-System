@@ -53,6 +53,10 @@ function processBrightnessDown() {
   processImage("brightnessdown");
 }
 
+function processContrast() {
+  processImage("contrast");
+}
+
 // Fungsi untuk menjalankan fungsi mirrorh dengan menggunakan file terbaru
 function processMirrorH() {
   processImage("mirrorh");

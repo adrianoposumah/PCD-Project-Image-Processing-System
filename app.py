@@ -24,13 +24,12 @@ def brightness_down(berkas):
     G = F.astype(np.uint8)
     return G
 
-def contrast(berkas,):
-    F = berkas.astype(np.float64)
-    F *= 100  # Menambahkan kontras sesuai dengan level yang diberikan
-    F[F > 255] = 255  # Batasi nilai kecerahan maksimum
-    F[F < 0] = 0  # Batasi nilai kecerahan minimum
-    G = F.astype(np.uint8)
-    return G
+def kontras(input1):
+    a = Image.open(input1)
+    a = np.array(a)
+    b = 2.5 * a
+    b = np.clip(b, 0, 255).astype(np.uint8) 
+    return b
 
 def perbesar(berkas, sy, sx):
     tinggi, lebar, channel = berkas.shape
@@ -134,9 +133,7 @@ def home():
                 elif action == 'brightnessdown':
                     processed_image_array = brightness_down(image_array)
                 elif action == 'contrast':
-                    contrast_level = float(request.form.get('contrast_level', 1.0))  # Ambil level kontras dari form
-                    processed_image_array = contrast(image_array, contrast_level)
-
+                    processed_image_array = kontras(filepath)
                 elif action == 'translate':
                     ty = int(request.form.get('ty', 0))  # Get translation values from form
                     tx = int(request.form.get('tx', 0))

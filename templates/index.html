@@ -4,38 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moai Image Processing</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="https://unicons.iconscout.com/release/v4.0.8/css/line.css"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
 
-    <script
-      src="https://kit.fontawesome.com/bfff52efaa.js"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://kit.fontawesome.com/bfff52efaa.js" crossorigin="anonymous"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
 
-    <script
-      src="https://code.jquery.com/jquery-3.7.1.js"
-      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css"
-    />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css" />
   </head>
   <body>
     <header class="border">
@@ -60,21 +40,11 @@
             <button onclick="clear_canvas()" class="button">
               <i class="fa-solid fa-trash"></i>
             </button>
-            <div
-              onclick="change_color(this)"
-              class="color-field eraser"
-              style="background-color: white"
-            >
+            <div onclick="change_color(this)" class="color-field eraser" style="background-color: white">
               <i class="fa-solid fa-eraser"></i>
             </div>
             <input id="color-picker" value="#276cb8" class="color-picker" />
-            <input
-              type="range"
-              min="1"
-              max="100"
-              class="pen-range"
-              oninput="setDrawWidth(this.value)"
-            />
+            <input type="range" min="1" max="100" class="pen-range" oninput="setDrawWidth(this.value)" />
           </div>
           <div class="process-image">
             <button onclick="saveCanvasImage()">Save Canvas Image</button>
@@ -85,14 +55,10 @@
         <div class="action-btn">
           <div class="upload-image">
             <input type="file" id="uploadBtn" />
-            <label for="uploadBtn"
-              ><i class="fa-solid fa-upload"></i>Upload File</label
-            >
+            <label for="uploadBtn"><i class="fa-solid fa-upload"></i>Upload File</label>
           </div>
           <div class="save-image">
-            <button onclick="saveImage()">
-              <i class="fa-solid fa-save"></i> Save Image
-            </button>
+            <button onclick="saveImage()"><i class="fa-solid fa-save"></i> Save Image</button>
           </div>
         </div>
         <div class="functions-button">
@@ -144,26 +110,15 @@
                 <input type="number" />
               </div>
               <div class="area-button">
-                <button onclick="processImage('brightnessup')">
-                  Process Image
-                </button>
-                <button onclick="processImage('brightnessdown')">
-                  Process Image
-                </button>
+                <button onclick="processImage('brightnessup')">Process Image</button>
+                <button onclick="processImage('brightnessdown')">Process Image</button>
               </div>
             </div>
             <div class="contrastEditor editor-area">
               <label for="contrast">Contrast: </label>
-              <input
-                type="number"
-                id="contrastLevelInput"
-                min="0"
-                max="10"
-                step="0.1"
-                value="1"
-              />
+              <input type="number" id="contrast" name="contrast" min="0" max="10" step="0.1" value="1" />
               <div class="area-button">
-                <button onclick="processContrast()">Process Image</button>
+                <button onclick="processImage('contrast')">Process Image</button>
               </div>
             </div>
             <div class="rotateEditor editor-area">
@@ -191,9 +146,7 @@
                 <input type="number" id="tx" name="tx" />
               </div>
               <div class="area-button">
-                <button onclick="processImage('translate')">
-                  Process Image
-                </button>
+                <button onclick="processImage('translate')">Process Image</button>
               </div>
             </div>
             <div class="scalingEditor editor-area">
@@ -211,12 +164,8 @@
             </div>
             <div class="mirrorEditor editor-area">
               <div class="area-button">
-                <button onclick="processImage('mirrorh')">
-                  MIRROR H<i class="uil uil-flip-v-alt"></i>
-                </button>
-                <button onclick="processImage('mirrorv')">
-                  MIRROR V<i class="uil uil-flip-v-alt"></i>
-                </button>
+                <button onclick="processImage('mirrorh')">MIRROR H<i class="uil uil-flip-v-alt"></i></button>
+                <button onclick="processImage('mirrorv')">MIRROR V<i class="uil uil-flip-v-alt"></i></button>
               </div>
             </div>
           </div>
@@ -244,9 +193,7 @@
         document.querySelector(".active-pencil").classList.toggle("active");
       }
 
-      document
-        .getElementById("uploadBtn")
-        .addEventListener("change", previewImage);
+      document.getElementById("uploadBtn").addEventListener("change", previewImage);
 
       function previewImage(event) {
         const file = event.target.files[0];
