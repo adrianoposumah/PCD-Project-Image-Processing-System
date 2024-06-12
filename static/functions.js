@@ -56,3 +56,15 @@ function processScale() {
 function processTranslate() {
   processImage("translate");
 }
+
+function process90(){
+  processImage("rotate90");
+}
+
+function process180(){
+  processImage("rotate180");
+}
+
+function process270(){
+  processImage("rotate270");
+}

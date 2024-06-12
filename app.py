@@ -62,6 +62,64 @@ def translasi(F, gy, gx):
 
     return G
 
+def rotate90(image):
+    tinggi, lebar, channel = image.shape
+    direction = "90"
+
+    if direction == '90':
+        # Create a new array for the rotated image with transposed dimensions
+        rotated_image = np.zeros((lebar, tinggi, channel), dtype=np.uint8)
+        
+        # Loop through each pixel in the input image
+        for y in range(tinggi):
+            for x in range(lebar):
+                for c in range(channel):
+                    # Map the pixel to its new location in the rotated image
+                    rotated_image[x, tinggi - 1 - y, c] = image[y, x, c]
+    else:
+        raise ValueError("Invalid direction. Choose from '90deg', '90deg', or '180deg'.")
+    
+    return rotated_image
+
+
+def rotate180(image):
+    tinggi, lebar, channel = image.shape
+    direction = "180"
+
+    if direction == '180':
+        # Create a new array for the rotated image with same dimensions
+        rotated_image = np.zeros((tinggi, lebar, channel), dtype=np.uint8)
+        
+        # Loop through each pixel in the input image
+        for y in range(tinggi):
+            for x in range(lebar):
+                for c in range(channel):
+                    # Map the pixel to its new location in the rotated image
+                    rotated_image[tinggi - 1 - y, lebar - 1 - x, c] = image[y, x, c]
+    else:
+        raise ValueError("Invalid direction. Choose from '90deg', '90deg', or '180deg'.")
+    
+    return rotated_image
+
+def rotate270(image):
+    tinggi, lebar, channel = image.shape
+    direction = "270"
+
+    if direction == '270':
+        # Create a new array for the rotated image with transposed dimensions
+        rotated_image = np.zeros((lebar, tinggi, channel), dtype=np.uint8)
+        
+        # Loop through each pixel in the input image
+        for y in range(tinggi):
+            for x in range(lebar):
+                for c in range(channel):
+                    # Map the pixel to its new location in the rotated image
+                    rotated_image[lebar - 1 - x, y, c] = image[y, x, c]
+    else:
+        raise ValueError("Invalid direction. Choose from '90deg', '90deg', or '180deg'.")
+    
+    return rotated_image
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
@@ -136,6 +194,26 @@ def home():
                     image = Image.open(filepath)
                     image_array = np.array(image)
                     processed_image_array = translasi(image_array, ty, tx)
+        
+                elif action == 'rotate90':  # Integrate the rotate action
+                    # Continue with rotate function
+                    image = Image.open(filepath)
+                    image_array = np.array(image)
+                    processed_image_array = rotate90(image_array)
+                    # elif action == 'rotate180' :
+                    #   processed_image_array = rotate90(image_array)
+                    # elif action == 'rotate270' :
+                    #   processed_image_array = rotate90(image_array)
+                elif action == 'rotate180':  # Integrate the rotate action
+                    # Continue with rotate function
+                    image = Image.open(filepath)
+                    image_array = np.array(image)
+                    processed_image_array = rotate180(image_array)
+                elif action == 'rotate270':  # Integrate the rotate action
+                    # Continue with rotate function
+                    image = Image.open(filepath)
+                    image_array = np.array(image)
+                    processed_image_array = rotate270(image_array)
 
                 else:
                     return jsonify({'error': 'Invalid action'}), 400
