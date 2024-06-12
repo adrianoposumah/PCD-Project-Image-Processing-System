@@ -196,7 +196,10 @@ def home():
                     ty = int(request.form.get('ty', 0))  # Get translation values from form
                     tx = int(request.form.get('tx', 0))
                     processed_image_array = translasi(image_array, ty, tx)
-
+                elif action == 'crop':
+                        f1 = int(request.form.get('f1', 0))  # Get crop values from form
+                        f2 = int(request.form.get('f2', 255))
+                        processed_image_array = crop(np.array(Image.open(filepath)), f1, f2)
                 else:
                     return jsonify({'error': 'Invalid action'}), 400
 
