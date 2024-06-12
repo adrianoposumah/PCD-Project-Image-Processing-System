@@ -11,40 +11,46 @@ def ensure_uploads_dir():
         os.makedirs('uploads')
 
 def perbesar(berkas, sy, sx):
-    F = np.array(berkas)
-    tinggi, lebar = F.shape
+    tinggi, lebar, channel = berkas.shape  # Mengambil dimensi gambar beserta channel warna
 
     tinggi_baru = int(tinggi * sy)
     lebar_baru = int(lebar * sx)
 
-    F2 = np.zeros((tinggi_baru, lebar_baru), dtype=np.uint8)
+    F2 = np.zeros((tinggi_baru, lebar_baru, channel), dtype=np.uint8)  # Membuat array baru dengan dimensi yang diperbesar
+
     for y in range(tinggi_baru):
-        y2 = int(y / sy)
+        y2 = int((y / sy))
         for x in range(lebar_baru):
-            x2 = int(x / sx)
-            F2[y, x] = F[y2, x2]
+            x2 = int((x / sx))
+            for c in range(channel):  # Looping untuk setiap channel warna
+                F2[y, x, c] = berkas[y2, x2, c]  # Memindahkan nilai pixel dari gambar asli ke gambar yang diperbesar
 
     return F2
 
-def mirrorh(F):
-    tinggi, lebar = F.shape
-    G = np.zeros((tinggi, lebar), dtype=np.uint8)
+def mirrorH(berkas):
+    tinggi, lebar, channel = berkas.shape
+    G = np.zeros((tinggi, lebar, channel), dtype=np.uint8)
+
     for y in range(tinggi):
         for x in range(lebar):
             x2 = lebar - x - 1
-            y2 = y
-            G[y, x] = F[y2, x2]
+            for c in range(channel):
+                G[y, x, c] = berkas[y, x2, c]  # Mengambil nilai pixel dari arah kanan ke kiri
+
     return G
 
-def mirrorv(F):
-    tinggi, lebar = F.shape
-    G = np.zeros((tinggi, lebar), dtype=np.uint8)
+def mirrorV(berkas):
+    tinggi, lebar, channel = berkas.shape
+    G = np.zeros((tinggi, lebar, channel), dtype=np.uint8)
+
     for y in range(tinggi):
+        y2 = tinggi - y - 1
         for x in range(lebar):
-            x2 = x
-            y2 = tinggi - y - 1
-            G[y, x] = F[y2, x2]
+            for c in range(channel):
+                G[y, x, c] = berkas[y2, x, c]  # Mengambil nilai pixel dari arah bawah ke atas
+
     return G
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -63,7 +69,7 @@ def upload():
         sx = float(request.form['sx'])
         filepath = os.path.join('uploads', file.filename)
         file.save(filepath)
-        image = Image.open(filepath).convert('L')  # Mengubah gambar menjadi grayscale untuk proses
+        image = Image.open(filepath) # Mengubah gambar menjadi grayscale untuk proses
         image_array = np.array(image)
         
         # Terapkan fungsi perbesar
@@ -88,13 +94,13 @@ def process_image():
         action = request.form['action']
         filepath = os.path.join('uploads', file.filename)
         file.save(filepath)
-        image = Image.open(filepath).convert('L')  # Mengubah gambar menjadi grayscale untuk proses
+        image = Image.open(filepath)  # Mengubah gambar menjadi grayscale untuk proses
         image_array = np.array(image)
         
         if action == 'mirrorh':
-            processed_image_array = mirrorh(image_array)
+            processed_image_array = mirrorH(image_array)  # Ubah dari mirrorh menjadi mirrorH
         elif action == 'mirrorv':
-            processed_image_array = mirrorv(image_array)
+            processed_image_array = mirrorV(image_array)
         else:
             return jsonify({'error': 'Invalid action'})
         
