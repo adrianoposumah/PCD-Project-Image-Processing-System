@@ -1,3 +1,5 @@
+let currentFile = ""; // Simpan nama file saat ini
+
 function processImage(action) {
   const fileInput = document.getElementById("uploadBtn");
   const file = fileInput.files[0];
@@ -22,6 +24,8 @@ function processImage(action) {
       if (data.error) {
         alert(data.error);
       } else {
+        // Simpan nama file yang dihasilkan
+        currentFile = data.filepath;
         updateImagePreview(data.filepath);
       }
     })
@@ -30,8 +34,17 @@ function processImage(action) {
     });
 }
 
-// Function to update the image preview
-function updateImagePreview(imagePath) {
-  const imagePreview = document.getElementById("imagePreview");
-  imagePreview.src = imagePath;
+// Fungsi untuk menjalankan fungsi mirrorh dengan menggunakan file terbaru
+function processMirrorH() {
+  processImage("mirrorh");
+}
+
+// Fungsi untuk menjalankan fungsi mirrorv dengan menggunakan file terbaru
+function processMirrorV() {
+  processImage("mirrorv");
+}
+
+// Fungsi untuk menjalankan fungsi scale dengan menggunakan file terbaru
+function processScale() {
+  processImage("scale");
 }
