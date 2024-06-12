@@ -10,6 +10,27 @@ def ensure_uploads_dir():
     if not os.path.exists('uploads'):
         os.makedirs('uploads')
 
+def brightness_up(berkas):
+    F = berkas.astype(np.float64)
+    F += 100  # Atur nilai kecerahan sesuai kebutuhan
+    F[F > 255] = 255  # Batasi nilai kecerahan maksimum
+    G = F.astype(np.uint8)
+    return G
+
+def brightness_down(berkas):
+    F = berkas.astype(np.float64)
+    F -= 100  # Atur nilai kecerahan sesuai kebutuhan
+    F[F < 0] = 0  # Batasi nilai kecerahan minimum
+    G = F.astype(np.uint8)
+    return G
+
+def kontras(input1):
+    a = Image.open(input1)
+    a = np.array(a)
+    b = 2.5 * a
+    b = np.clip(b, 0, 255).astype(np.uint8) 
+    return b
+
 def perbesar(berkas, sy, sx):
     tinggi, lebar, channel = berkas.shape
 
@@ -49,7 +70,7 @@ def mirrorV(berkas):
             for c in range(channel):
                 G[y, x, c] = berkas[y2, x, c]
 
-    return 
+    return G
 
 def translasi(F, gy, gx):
     tinggi, lebar, channel = F.shape
@@ -59,6 +80,17 @@ def translasi(F, gy, gx):
         for x in range(lebar):
             if 0 <= y + gy < tinggi and 0 <= x + gx < lebar:
                 G[y + gy, x + gx] = F[y, x]
+
+    return G
+
+def crop(berkas, f1, f2):
+    tinggi, lebar = berkas.shape  # Mengambil tinggi dan lebar saja
+    G = np.zeros((tinggi, lebar), dtype=np.uint8)
+
+    for y in range(tinggi):
+        for x in range(lebar):
+            if f1 <= berkas[y, x] <= f2:  # Mengubah pengecekan kondisi
+                G[y, x] = berkas[y, x]
 
     return G
 
@@ -132,8 +164,6 @@ def home():
         if file:
             try:
                 action = request.form.get('action')
-                sy = float(request.form.get('sy', 1))
-                sx = float(request.form.get('sx', 1))
 
                 # Use currentFile if available
                 filepath = file.filename
@@ -148,72 +178,24 @@ def home():
 
                 # Apply the appropriate function based on the selected action
                 if action == 'scale':
+                    sy = float(request.form.get('sy', 1))
+                    sx = float(request.form.get('sx', 1))
                     processed_image_array = perbesar(image_array, sy, sx)
-                    # Save the processed image with a specific filename
-                    processed_filepath = os.path.join('uploads', 'scaled_' + os.path.basename(filepath))
-                    processed_image = Image.fromarray(processed_image_array)
-                    processed_image.save(processed_filepath)
                 elif action == 'mirrorh':
-                    # Check if there's a scaled image available
-                    scaled_filepath = os.path.join('uploads', 'scaled_' + os.path.basename(filepath))
-                    if os.path.exists(scaled_filepath):
-                        filepath = scaled_filepath  # Use scaled image for mirror function
-                    else:
-                        return jsonify({'error': 'Scaled image not found'}), 400
-
-                    # Continue with mirror function
-                    image = Image.open(filepath)
-                    image_array = np.array(image)
                     processed_image_array = mirrorH(image_array)
                 elif action == 'mirrorv':
-                    # Continue with mirror function using scaled image if available
-                    scaled_filepath = os.path.join('uploads', 'scaled_' + os.path.basename(filepath))
-                    if os.path.exists(scaled_filepath):
-                        filepath = scaled_filepath  # Use scaled image for mirror function
-                    else:
-                        return jsonify({'error': 'Scaled image not found'}), 400
-
-                    # Continue with mirror function
-                    image = Image.open(filepath)
-                    image_array = np.array(image)
                     processed_image_array = mirrorV(image_array)
 
+                elif action == 'brightnessup':
+                    processed_image_array = brightness_up(image_array)
+                elif action == 'brightnessdown':
+                    processed_image_array = brightness_down(image_array)
+                elif action == 'contrast':
+                    processed_image_array = kontras(filepath)
                 elif action == 'translate':
-                    # Continue with translate function
                     ty = int(request.form.get('ty', 0))  # Get translation values from form
                     tx = int(request.form.get('tx', 0))
-
-                    # Continue with translate function using scaled image if available
-                    scaled_filepath = os.path.join('uploads', 'scaled_' + os.path.basename(filepath))
-                    if os.path.exists(scaled_filepath):
-                        filepath = scaled_filepath  # Use scaled image for translate function
-                    else:
-                        return jsonify({'error': 'Scaled image not found'}), 400
-
-                    # Continue with translate function
-                    image = Image.open(filepath)
-                    image_array = np.array(image)
                     processed_image_array = translasi(image_array, ty, tx)
-        
-                elif action == 'rotate90':  # Integrate the rotate action
-                    # Continue with rotate function
-                    image = Image.open(filepath)
-                    image_array = np.array(image)
-                    processed_image_array = rotate90(image_array)
-                    # elif action == 'rotate180' :
-                    #   processed_image_array = rotate90(image_array)
-                    # elif action == 'rotate270' :
-                    #   processed_image_array = rotate90(image_array)
-                elif action == 'rotate180':  # Integrate the rotate action
-                    # Continue with rotate function
-                    image = Image.open(filepath)
-                    image_array = np.array(image)
-                    processed_image_array = rotate180(image_array)
-                elif action == 'rotate270':  # Integrate the rotate action
-                    # Continue with rotate function
-                    image = Image.open(filepath)
-                    image_array = np.array(image)
-                    processed_image_array = rotate270(image_array)
 
                 else:
                     return jsonify({'error': 'Invalid action'}), 400
@@ -228,6 +210,7 @@ def home():
                 return jsonify({'error': str(e)}), 500
     else:
         return render_template("index.html")
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):

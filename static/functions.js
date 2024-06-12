@@ -7,7 +7,6 @@ function processImage(action) {
   formData.append("file", file);
   formData.append("action", action);
 
-  // Append scale, translate, or other parameters if applicable
   if (action === "scale") {
     const sy = document.getElementById("sy").value;
     const sx = document.getElementById("sx").value;
@@ -18,6 +17,11 @@ function processImage(action) {
     const tx = document.getElementById("tx").value;
     formData.append("ty", ty);
     formData.append("tx", tx);
+  } else if (action === "crop") {
+    const f1 = document.getElementById("f1").value;
+    const f2 = document.getElementById("f2").value;
+    formData.append("f1", f1);
+    formData.append("f2", f2);
   }
 
   fetch("/", {
@@ -29,6 +33,7 @@ function processImage(action) {
       if (data.error) {
         alert(data.error);
       } else {
+        // Simpan nama file yang dihasilkan
         currentFile = data.filepath;
         updateImagePreview(data.filepath);
       }
@@ -36,6 +41,20 @@ function processImage(action) {
     .catch((error) => {
       console.error("Error:", error);
     });
+}
+
+// Function untuk menambah kecerahan gambar
+function processBrightnessUp() {
+  processImage("brightnessup");
+}
+
+// Function untuk mengurangi kecerahan gambar
+function processBrightnessDown() {
+  processImage("brightnessdown");
+}
+
+function processContrast() {
+  processImage("contrast");
 }
 
 // Fungsi untuk menjalankan fungsi mirrorh dengan menggunakan file terbaru
@@ -57,6 +76,7 @@ function processTranslate() {
   processImage("translate");
 }
 
+
 function process90(){
   processImage("rotate90");
 }
@@ -67,4 +87,8 @@ function process180(){
 
 function process270(){
   processImage("rotate270");
+}
+
+function processCrop() {
+  processImage("crop");
 }
