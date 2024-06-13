@@ -29,11 +29,9 @@ def brightness_down(berkas):
     G = F.astype(np.uint8)
     return G
 
-def kontras(input1):
-    a = Image.open(input1)
-    a = np.array(a)
-    b = 2.5 * a
-    b = np.clip(b, 0, 255).astype(np.uint8) 
+def kontras(berkas, factor):
+    b = factor * berkas
+    b = np.clip(b, 0, 255).astype(np.uint8)
     return b
 
 def perbesar(berkas, sy, sx):
@@ -185,7 +183,8 @@ def home():
                 elif action == 'brightnessdown':
                     processed_image_array = brightness_down(image_array)
                 elif action == 'contrast':
-                    processed_image_array = kontras(filepath)
+                    factor = float(request.form.get('factor', 1.0))
+                    processed_image_array = kontras(image_array, factor)
                 elif action == 'translate':
                     ty = int(request.form.get('ty', 0))  
                     tx = int(request.form.get('tx', 0))

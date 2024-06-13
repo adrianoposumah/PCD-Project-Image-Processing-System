@@ -22,6 +22,9 @@ function processImage(action) {
     const f2 = document.getElementById("f2").value;
     formData.append("f1", f1);
     formData.append("f2", f2);
+  } else if (action === "contrast") {
+    const contrast = document.getElementById("contrast").value;
+    formData.append("contrast", contrast);
   }
 
   fetch("/", {
@@ -76,16 +79,15 @@ function processTranslate() {
   processImage("translate");
 }
 
-
-function process90(){
+function process90() {
   processImage("rotate90");
 }
 
-function process180(){
+function process180() {
   processImage("rotate180");
 }
 
-function process270(){
+function process270() {
   processImage("rotate270");
 }
 
