@@ -13,10 +13,6 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-.border {
-  /* border: 1px solid black; */
-}
-
 header {
   width: 100%;
   height: 50px;
@@ -45,10 +41,19 @@ header h1 {
   justify-content: center;
 }
 
-#canvas {
-  border: 1px solid greenyellow;
+.canvas-paper {
   width: 80%;
-  height: 90%;
+  height: 80%;
+  position: relative;
+  overflow: hidden;
+}
+
+#canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .toolbar-area {
