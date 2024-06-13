@@ -7,7 +7,6 @@ app = Flask(__name__)
 
 latest_processed_image = None
 
-# Fungsi untuk memastikan direktori uploads ada jika belum
 def ensure_uploads_dir():
     if not os.path.exists('uploads'):
         os.makedirs('uploads')
@@ -18,15 +17,15 @@ def reset_saved_image():
 
 def brightness_up(berkas):
     F = berkas.astype(np.float64)
-    F += 100  # Atur nilai kecerahan sesuai kebutuhan
-    F[F > 255] = 255  # Batasi nilai kecerahan maksimum
+    F += 100  
+    F[F > 255] = 255 
     G = F.astype(np.uint8)
     return G
 
 def brightness_down(berkas):
     F = berkas.astype(np.float64)
-    F -= 100  # Atur nilai kecerahan sesuai kebutuhan
-    F[F < 0] = 0  # Batasi nilai kecerahan minimum
+    F -= 100  
+    F[F < 0] = 0  
     G = F.astype(np.uint8)
     return G
 
@@ -90,12 +89,12 @@ def translasi(F, gy, gx):
     return G
 
 def crop(berkas, f1, f2):
-    tinggi, lebar = berkas.shape  # Mengambil tinggi dan lebar saja
+    tinggi, lebar = berkas.shape  
     G = np.zeros((tinggi, lebar), dtype=np.uint8)
 
     for y in range(tinggi):
         for x in range(lebar):
-            if f1 <= berkas[y, x] <= f2:  # Mengubah pengecekan kondisi
+            if f1 <= berkas[y, x] <= f2:  
                 G[y, x] = berkas[y, x]
 
     return G
@@ -105,14 +104,11 @@ def rotate90(image):
     direction = "90"
 
     if direction == '90':
-        # Create a new array for the rotated image with transposed dimensions
         rotated_image = np.zeros((lebar, tinggi, channel), dtype=np.uint8)
         
-        # Loop through each pixel in the input image
         for y in range(tinggi):
             for x in range(lebar):
                 for c in range(channel):
-                    # Map the pixel to its new location in the rotated image
                     rotated_image[x, tinggi - 1 - y, c] = image[y, x, c]
     else:
         raise ValueError("Invalid direction. Choose from '90deg', '90deg', or '180deg'.")
@@ -125,14 +121,11 @@ def rotate180(image):
     direction = "180"
 
     if direction == '180':
-        # Create a new array for the rotated image with same dimensions
         rotated_image = np.zeros((tinggi, lebar, channel), dtype=np.uint8)
         
-        # Loop through each pixel in the input image
         for y in range(tinggi):
             for x in range(lebar):
                 for c in range(channel):
-                    # Map the pixel to its new location in the rotated image
                     rotated_image[tinggi - 1 - y, lebar - 1 - x, c] = image[y, x, c]
     else:
         raise ValueError("Invalid direction. Choose from '90deg', '90deg', or '180deg'.")
@@ -144,14 +137,11 @@ def rotate270(image):
     direction = "270"
 
     if direction == '270':
-        # Create a new array for the rotated image with transposed dimensions
         rotated_image = np.zeros((lebar, tinggi, channel), dtype=np.uint8)
         
-        # Loop through each pixel in the input image
         for y in range(tinggi):
             for x in range(lebar):
                 for c in range(channel):
-                    # Map the pixel to its new location in the rotated image
                     rotated_image[lebar - 1 - x, y, c] = image[y, x, c]
     else:
         raise ValueError("Invalid direction. Choose from '90deg', '90deg', or '180deg'.")
@@ -173,26 +163,15 @@ def home():
             try:
                 action = request.form.get('action')
                 if latest_processed_image is None:
-                    # If no image has been processed yet, save the uploaded file as the latest processed image
                     filepath = os.path.join('uploads', 'processed_' + file.filename)
                     file.save(filepath)
                     latest_processed_image = filepath
                 else:
-                    # Use the latest processed image as the input for the next transformation
                     filepath = latest_processed_image
-
-                # Use currentFile if available
-                # filepath = file.filename
-                # if file.filename.startswith('processed_'):
-                #     filepath = os.path.join('uploads', file.filename)
-                # else:
-                #     filepath = os.path.join('uploads', 'processed_' + file.filename)
-                #     file.save(filepath)
 
                 image = Image.open(filepath)
                 image_array = np.array(image)
 
-                # Apply the appropriate function based on the selected action
                 if action == 'scale':
                     sy = float(request.form.get('sy', 1))
                     sx = float(request.form.get('sx', 1))
@@ -201,7 +180,6 @@ def home():
                     processed_image_array = mirrorH(image_array)
                 elif action == 'mirrorv':
                     processed_image_array = mirrorV(image_array)
-
                 elif action == 'brightnessup':
                     processed_image_array = brightness_up(image_array)
                 elif action == 'brightnessdown':
@@ -209,35 +187,28 @@ def home():
                 elif action == 'contrast':
                     processed_image_array = kontras(filepath)
                 elif action == 'translate':
-                    ty = int(request.form.get('ty', 0))  # Get translation values from form
+                    ty = int(request.form.get('ty', 0))  
                     tx = int(request.form.get('tx', 0))
                     processed_image_array = translasi(image_array, ty, tx)
-
-
-                elif action == 'rotate90':  # Integrate the rotate action
-                    # Continue with rotate function
+                elif action == 'rotate90':  
                     image = Image.open(filepath)
                     image_array = np.array(image)
                     processed_image_array = rotate90(image_array)
-                elif action == 'rotate180':  # Integrate the rotate action
-                    # Continue with rotate function
+                elif action == 'rotate180':  
                     image = Image.open(filepath)
                     image_array = np.array(image)
                     processed_image_array = rotate180(image_array)
-                elif action == 'rotate270':  # Integrate the rotate action
-                    # Continue with rotate function
+                elif action == 'rotate270':  
                     image = Image.open(filepath)
                     image_array = np.array(image)
                     processed_image_array = rotate270(image_array)
-
                 elif action == 'crop':
-                        f1 = int(request.form.get('f1', 0))  # Get crop values from form
+                        f1 = int(request.form.get('f1', 0)) 
                         f2 = int(request.form.get('f2', 255))
                         processed_image_array = crop(np.array(Image.open(filepath)), f1, f2)
                 else:
                     return jsonify({'error': 'Invalid action'}), 400
 
-                # Convert back to image for display or saving
                 processed_image = Image.fromarray(processed_image_array)
                 processed_filepath = os.path.join('uploads', 'processed_' + os.path.basename(filepath))
                 processed_image.save(processed_filepath)
@@ -250,7 +221,6 @@ def home():
     else:
         latest_processed_image = None
         return render_template("index.html")
-
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
