@@ -25,6 +25,12 @@ function processImage(action) {
   } else if (action === "contrast") {
     const contrast = document.getElementById("contrast").value;
     formData.append("contrast", contrast);
+  } else if (action === "brightnessup") {
+    const brightnessup = document.getElementById("brightnessup").value;
+    formData.append("brightnessup", brightnessup);
+  } else if (action === "brightnessdown") {
+    const brightnessdown = document.getElementById("brightnessdown").value;
+    formData.append("brightnessdown", brightnessdown);
   }
 
   fetch("/", {

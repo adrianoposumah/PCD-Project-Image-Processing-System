@@ -15,16 +15,16 @@ def reset_saved_image():
     latest_processed_image = None
     return latest_processed_image
 
-def brightness_up(berkas):
+def brightness_up(berkas, brightnessup):
     F = berkas.astype(np.float64)
-    F += 100  
+    F += brightnessup 
     F[F > 255] = 255 
     G = F.astype(np.uint8)
     return G
 
-def brightness_down(berkas):
+def brightness_down(berkas, brightnessdown):
     F = berkas.astype(np.float64)
-    F -= 100  
+    F -= brightnessdown  
     F[F < 0] = 0  
     G = F.astype(np.uint8)
     return G
@@ -179,9 +179,11 @@ def home():
                 elif action == 'mirrorv':
                     processed_image_array = mirrorV(image_array)
                 elif action == 'brightnessup':
-                    processed_image_array = brightness_up(image_array)
+                    brightnessup = float(request.form.get('brightnessup', 1.0))
+                    processed_image_array = brightness_up(image_array, brightnessup)
                 elif action == 'brightnessdown':
-                    processed_image_array = brightness_down(image_array)
+                    brightnessdown = float(request.form.get('brightnessdown', 1.0))
+                    processed_image_array = brightness_down(image_array, brightnessdown)
                 elif action == 'contrast':
                     factor = float(request.form.get('factor', 1.0))
                     processed_image_array = kontras(image_array, factor)
